@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Advanced Styling & JS Project</title>
+  <style>
+    /* Basic Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f0f0f0;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    /* Quiz Styles */
+    #quiz-section {
+      margin-bottom: 40px;
+    }
+
+    .question {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+
+    .options button {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      background: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .options button:hover {
+      background: #0056b3;
+    }
+
+    #next-btn {
+      margin-top: 20px;
+    }
+
+    /* Joke Styles */
+    #joke-section {
+      margin-top: 40px;
+    }
+
+    #joke {
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+
+    #joke-btn {
+      padding: 10px 20px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #joke-btn:hover {
+      background: #1e7e34;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .question {
+        font-size: 1em;
+      }
+
+      .options button {
+        font-size: 0.9em;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Interactive Quiz</h1>
+    <div id="quiz-section">
+      <div id="question" class="question"></div>
+      <div id="options" class="options"></div>
+      <button id="next-btn">Next</button>
+    </div>
+
+    <h1>Random Joke Generator</h1>
+    <div id="joke-section">
+      <p id="joke">Click below to fetch a joke!</p>
+      <button id="joke-btn">Get Joke</button>
+    </div>
+  </div>
+
+  <script>
+    // --- Quiz Logic ---
+    const quiz = [
+      {
+        question: "What is 2 + 2?",
+        options: ["3", "4", "5", "6"],
+        answer: "4"
+      },
+      {
+        question: "Which language runs in a web browser?",
+        options: ["Python", "Java", "C++", "JavaScript"],
+        answer: "JavaScript"
+      },
+      {
+        question: "What does CSS stand for?",
+        options: ["Central Style Sheet", "Cascading Style Sheets", "Creative Style System", "Computer Style Sheet"],
+        answer: "Cascading Style Sheets"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const nextBtn = document.getElementById("next-btn");
+
+    function showQuestion() {
+      const q = quiz[currentQuestion];
+      questionEl.textContent = q.question;
+      optionsEl.innerHTML = "";
+      q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.textContent = option;
+        btn.onclick = () => checkAnswer(option);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      if (selected === quiz[currentQuestion].answer) {
+        score++;
+        alert("Correct!");
+      } else {
+        alert("Wrong!");
+      }
+    }
+
+    nextBtn.addEventListener("click", () => {
+      currentQuestion++;
+      if (currentQuestion < quiz.length) {
+        showQuestion();
+      } else {
+        questionEl.textContent = `Quiz Complete! Your Score: ${score}/${quiz.length}`;
+        optionsEl.innerHTML = "";
+        nextBtn.style.display = "none";
+      }
+    });
+
+    showQuestion();
+
+    // --- Joke API Logic ---
+    const jokeBtn = document.getElementById("joke-btn");
+    const jokeText = document.getElementById("joke");
+
+    jokeBtn.addEventListener("click", async () => {
+      jokeText.textContent = "Loading...";
+      try {
+        const res = await fetch("https://api.chucknorris.io/jokes/random");
+        const data = await res.json();
+        jokeText.textContent = data.value;
+      } catch (error) {
+        jokeText.textContent = "Failed to load joke.";
+        console.error(error);
+      }
+    });
+  </script>
+
+</body>
+</html>
